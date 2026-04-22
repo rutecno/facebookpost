@@ -1,16 +1,38 @@
-import Post from "./components/Post"
-import { PostProvider } from "./context/PostContext"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { PostProvider } from './context/PostContext';
+import Login from './components/Login';
+import Post from './components/Post';
+import './App.css';
 
+function AppContent() {
+  const { isAuthenticated } = useAuth();
 
-function App() {
-
-  return(
-    <PostProvider>
-      <div className="app-container">
-        <Post />
-      </div>
-    </PostProvider>
-  )
+  return (
+    <div className="app-container">
+      {isAuthenticated ? (
+        <PostProvider>
+          <Routes>
+            <Route path="/" element={<Post />} />
+          </Routes>
+        </PostProvider>
+      ) : (
+        <Routes>
+          <Route path="*" element={<Login />} />
+        </Routes>
+      )}
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;

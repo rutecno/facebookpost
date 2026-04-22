@@ -1,19 +1,14 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { PostContext } from "../context/PostContext";
+import { useAuth } from "../context/AuthContext";
 import CommentForm from "./commentForm";
 import ListComments from "./listComment";
 
 const Post = () => {
     const { posts, addLikeToPost, addCommentToPost, sharePost } = useContext(PostContext);
+    const { user, logout } = useAuth();
     const [showCommentForm, setShowCommentForm] = useState(false);
-    const [currentPost, setCurrentPost] = useState(null);
-
-    // Cargar el primer post
-    useEffect(() => {
-        if (posts.length > 0) {
-            setCurrentPost(posts[0]);
-        }
-    }, [posts]);
+    const currentPost = posts.length > 0 ? posts[0] : null;
 
     if (!currentPost) {
         return <div className="loading">Cargando post...</div>;
@@ -38,7 +33,19 @@ const Post = () => {
     };
 
     return (
-        <div className="post-card">
+        <>
+            {/* Header con información del usuario */}
+            <div className="app-header">
+                <div className="user-info">
+                    <span className="user-avatar">{user?.avatar}</span>
+                    <span className="user-name">Hola, {user?.username}!</span>
+                </div>
+                <button className="logout-button" onClick={logout}>
+                    Cerrar Sesión
+                </button>
+            </div>
+
+            <div className="post-card">
             {/* Header del post */}
             <div className="post-header">
                 <div className="author-info">
@@ -100,6 +107,7 @@ const Post = () => {
                 postId={currentPost.id}
             />
         </div>
+        </>
     );
 };
 

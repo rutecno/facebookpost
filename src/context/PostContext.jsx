@@ -1,13 +1,10 @@
-import { createContext, useState, useRef } from 'react';
+import { createContext, useState, useRef, useContext } from 'react';
+import { AuthContext } from './AuthContext';
 
 export const PostContext = createContext();
 
-// Función para generar IDs únicos
-const generateUniqueId = () => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
-
 export const PostProvider = ({ children }) => {
+    const { user } = useContext(AuthContext);
     const commentIdRef = useRef(3);
     const replyIdRef = useRef(1);
 
@@ -61,8 +58,8 @@ export const PostProvider = ({ children }) => {
                         ...post.comments,
                         {
                             id: newId,
-                            author: "Nuevo Usuario",
-                            avatar: "👤",
+                            author: user ? user.username : "Usuario",
+                            avatar: user ? user.avatar : "👤",
                             text: comment,
                             likes: 0,
                             replies: []
@@ -88,8 +85,8 @@ export const PostProvider = ({ children }) => {
                                     ...comment.replies,
                                     {
                                         id: newReplyId,
-                                        author: "Nuevo Usuario",
-                                        avatar: "👤",
+                                        author: user ? user.username : "Usuario",
+                                        avatar: user ? user.avatar : "👤",
                                         text: reply,
                                         likes: 0
                                     }
